@@ -24,7 +24,7 @@ class ReviewParser extends Actor {
       val rating = fields(5).text().toFloat
       Some((beerId, rating))
     } catch {
-      case e: Exception => println(e); None
+      case e: Exception => None
     }
   }
 

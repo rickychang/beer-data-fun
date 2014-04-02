@@ -1,10 +1,10 @@
-
 import java.io._
 import org.jsoup.Jsoup
 import org.jsoup.nodes._
 import scala.collection.mutable.ListBuffer
 import scala.collection.JavaConverters._
 val userRatingsPage = "http://www.ratebeer.com/user/5328/ratings/%d/"
+val userProfilePage = "http://www.ratebeer.com/user/%d/"
 val reviews = new ListBuffer[(Int, Float)]()
 def extractReviewRows(d: Document) = d.select("tr[nowrap]")
 def extractBeerAndRating(elmt: Element): Option[(Int, Float)] = {
@@ -38,11 +38,58 @@ def printToFile(f: java.io.File)(op: java.io.PrintWriter => Unit) {
   try { op(p) } finally { p.close() }
 }
 
-val userReviews = extractUserReviews(reviews, 1)
+//val userReviews = extractUserReviews(reviews, 1)
+//
+//println(userReviews.length)
 
-println(userReviews.length)
+
+val doc = Jsoup.connect(userProfilePage.format(38926)).get()
 
 
-printToFile(new File("/Users/rchang/sampleReviews.tsv"))(p => {
-  userReviews.foreach(e => p.println(5328 + "\t" + e._1 + "\t" + e._2))
-})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+val bElmts = doc.select("#contentcenter table b").asScala
+bElmts.headOption.map(v => (v.text().toInt + 50 - 1) / 50)
+
+
