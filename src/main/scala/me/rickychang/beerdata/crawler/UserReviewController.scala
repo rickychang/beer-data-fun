@@ -9,16 +9,14 @@ import akka.pattern._
 import akka.util.Timeout
 import spray.http._
 import spray.can.Http
+import akka.actor._
 import HttpMethods._
 import akka.pattern.{ ask, pipe }
 
 
 
-case object Response
-case class UserReviews(reviews: Seq[(Int, Float)])
-case class Start(userId: Int, numReviewPages: Int)
 
-class UserReviewController extends Actor {
+class UserReviewController(parser: ActorRef) extends Actor {
 
   implicit val system = context.system
 
@@ -31,10 +29,10 @@ class UserReviewController extends Actor {
   }
 
   def receive = {
-    case HttpResponse(status, entity, _, _) => println("got response of length: " + entity.data.length)
-    case UserReviews(reviews) => println("Received %d reviews.".format(reviews.length))
-    case Start(userId, pages) => {
-      println("test")
+    case HttpResponse(status, entity, _, _) => parser ! new ReviewPageBody(entity.asString)
+    case ParsedReviews(reviews) => println("Received %d reviews.".format(reviews.length))
+    case StartCrawling(userId, pages) => {
+      println("Starting")
       fetchPages(userId, pages)
     }
   }
